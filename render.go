@@ -1,10 +1,11 @@
 package graphite
 
 import (
-	"github.com/buger/jsonparser"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/buger/jsonparser"
 )
 
 // RenderRequest is struct, describing request to graphite `/render/` api.
@@ -19,6 +20,7 @@ type RenderRequest struct {
 	From          time.Time
 	Until         time.Time
 	MaxDataPoints int
+	NoNullPoints  bool
 	Targets       []string
 }
 
@@ -35,6 +37,9 @@ func (r RenderRequest) toQueryString() string {
 	}
 	if r.MaxDataPoints != 0 {
 		values.Set("maxDataPoints", strconv.Itoa(r.MaxDataPoints))
+	}
+	if r.NoNullPoints {
+		values.Set("noNullPoints", strconv.FormatBool(r.NoNullPoints))
 	}
 	qs := values.Encode()
 	return "/render/?" + qs
