@@ -22,6 +22,7 @@ type RenderRequest struct {
 	Until         time.Time
 	MaxDataPoints int
 	NoNullPoints  bool
+	CustomHeaders map[string]string
 	Targets       []string
 }
 
@@ -44,6 +45,12 @@ func (r RenderRequest) toQueryString() string {
 	}
 	qs := values.Encode()
 	return "/render/?" + qs
+}
+func (r RenderRequest) getCustomHeaders() map[string]string {
+	if r.CustomHeaders == nil || len(r.CustomHeaders) == 0 {
+		return make(map[string]string)
+	}
+	return r.CustomHeaders
 }
 
 // QueryRender performs query to graphite `/render/` api. Normally it should return `[]graphite.Series`,

@@ -9,10 +9,11 @@ import (
 
 // FindMetricRequest is struct describing request to /metrics/find api.
 type FindMetricRequest struct {
-	From      time.Time
-	Until     time.Time
-	Query     string
-	Wildcards bool
+	From          time.Time
+	Until         time.Time
+	Query         string
+	CustomHeaders map[string]string
+	Wildcards     bool
 }
 
 func (r FindMetricRequest) toQueryString() string {
@@ -33,6 +34,13 @@ func (r FindMetricRequest) toQueryString() string {
 	}
 	qs := values.Encode()
 	return "/metrics/find?" + qs
+}
+
+func (r FindMetricRequest) getCustomHeaders() map[string]string {
+	if r.CustomHeaders == nil || len(r.CustomHeaders) == 0 {
+		return make(map[string]string)
+	}
+	return r.CustomHeaders
 }
 
 type Metric struct {
@@ -66,9 +74,10 @@ func unmarshallMetrics(data []byte) ([]Metric, error) {
 }
 
 type ExpandMetricRequest struct {
-	Query       string
-	GroupByExpr bool
-	LeavesOnly  bool
+	Query         string
+	GroupByExpr   bool
+	CustomHeaders map[string]string
+	LeavesOnly    bool
 }
 
 func (r ExpandMetricRequest) toQueryString() string {
@@ -84,6 +93,12 @@ func (r ExpandMetricRequest) toQueryString() string {
 	}
 	qs := values.Encode()
 	return "/metrics/expand?" + qs
+}
+func (r ExpandMetricRequest) getCustomHeaders() map[string]string {
+	if r.CustomHeaders == nil || len(r.CustomHeaders) == 0 {
+		return make(map[string]string)
+	}
+	return r.CustomHeaders
 }
 
 // Results is a list of metric ids.

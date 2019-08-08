@@ -42,7 +42,14 @@ func NewFromString(urlString string) (*Client, error) {
 
 func (c *Client) makeRequest(q qsGenerator) ([]byte, error) {
 	empty := []byte{}
-	response, err := c.Client.Get(c.queryAsString(q))
+	req, err := http.NewRequest("GET", c.queryAsString(q), nil)
+	if err != nil {
+		return empty, c.createError(q, "Request error")
+	}
+	for k, v := range q.getCustomHeaders() {
+		req.Header.Add(k, v)
+	}
+	response, err := c.Client.Do(req)
 	if err != nil {
 		return empty, c.createError(q, "Request error")
 	}
@@ -71,4 +78,5 @@ func (c *Client) queryAsString(r qsGenerator) string {
 
 type qsGenerator interface {
 	toQueryString() string
+	getCustomHeaders() map[string]string
 }
