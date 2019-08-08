@@ -1,6 +1,7 @@
 package graphite
 
 import (
+	"math"
 	"net/url"
 	"strconv"
 	"time"
@@ -142,7 +143,7 @@ func unmarshallDatapoint(data []byte) (DataPoint, error) {
 		}
 		if position == 0 {
 			if dataType == jsonparser.Null {
-				result.Value = 0
+				result.Value = math.NaN()
 			} else {
 				v, e := strconv.ParseFloat(string(value), 64)
 				if e != nil {
